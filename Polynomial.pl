@@ -26,7 +26,7 @@ coefPorPol(Alpha, [A|Pol], [An|PolN]):-
 	coefPorPol(Alpha,Pol, PolN).
 
 % -----------------------------------------------------------------------------------------
-%Resta de polinios
+%Resta de polinomios
 % Denominación de variables. A es el coeficiente de
 % la lista de coeficientes del polinomio Pol1, Pol2, Pol3 es una lista
 % de coeficientes
