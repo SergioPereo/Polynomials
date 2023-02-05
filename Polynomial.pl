@@ -19,7 +19,7 @@ sumaPol([], Pol2, Pol2):-
     !.
 %Suma de listas no vacías.
 sumaPol([A1|Pol1], [A2|Pol2], [A3|Pol3]) :-
-    A3 is (A1)+(A2), %Agregemos a la cabeza de nuestra lista res la suma de la cabezas del poliniomio 1 y 2.
+    A3 is (A1+A2), %Agregemos a la cabeza de nuestra lista res la suma de la cabezas del poliniomio 1 y 2.
     sumaPol(Pol1,Pol2,Pol3). % Llamada recursiva para sumar las colas restantes de la lista de coeficientes de polinomios
 
 cls :- write('\33\[2J').
