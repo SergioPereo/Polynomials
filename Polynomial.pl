@@ -18,7 +18,7 @@ sumaPol([A1|Pol1], [A2|Pol2], [A3|Pol3]) :-
     A3 is (A1+A2), %Agregemos a la cabeza de nuestra lista res la suma de la cabezas del poliniomio 1 y 2.
     sumaPol(Pol1,Pol2,Pol3). % Llamada recursiva para sumar las colas restantes de la lista de coeficientes de polinomios
 % ----------------------------------------------------------------------------------------
-% Produco escalar a * [An,...,An-1]
+% Produco escalar alpha * [An,...,An-1]
 coefPorPol(_,[],[]):- %Multplicación de una lista vacía
 	!.
 coefPorPol(Alpha, [A|Pol], [An|PolN]):-
@@ -26,7 +26,7 @@ coefPorPol(Alpha, [A|Pol], [An|PolN]):-
 	coefPorPol(Alpha,Pol, PolN).
 
 % -----------------------------------------------------------------------------------------
-%Resta de polinomios
+%Resta de polinios
 % Denominación de variables. A es el coeficiente de
 % la lista de coeficientes del polinomio Pol1, Pol2, Pol3 es una lista
 % de coeficientes
@@ -35,5 +35,18 @@ restaPol(Pol1,Pol2,PolRes):-
     sumaPol(Pol1,Pol2Inv,PolRes).
 
 % -----------------------------------------------------------------------------------------
+% -------- PRODUCTO
+% Si B es vacío, el producto es vacío.
+% producto_pol(i, i, o):
+producto_pol(_,[],[]):-
+	!.
+% Si son no vacíos
+producto_pol(A,[Cb|B], C) :-
+   producto_pol(A,B, Rec), %quitamos cabeza de B y llamamos recursivamente.
+   coefPorPol(Cb, A, Esc), %calculamos el prod. Esc con la cabeza de B.
+   sumaPol(Esc, [0|Rec], C), %sumamos ambos resultados anteriores en C.
+   !.
+
 cls :- write('\33\[2J').
+
 
