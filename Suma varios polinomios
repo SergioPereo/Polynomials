@@ -1,0 +1,22 @@
+%+++++++++++++++++++++++++Parte que ya tenía alberto+++++++++++++++++++++++++++++
+
+sumaPol(Pol1,[],Pol1):- !.
+sumaPol([], Pol2, Pol2):- !.
+sumaPol([A1|Pol1], [A2|Pol2], [A3|Pol3]) :-
+    A3 is (A1+A2), %Agregemos a la cabeza de nuestra lista res la suma de
+    sumaPol(Pol1,Pol2,Pol3). % la cabezas del poliniomio 1 y 2.
+
+%+++++++++++++++++++++++++++++++Parte nueva++++++++++++++++++++++++++++++++++++++
+
+sumaPols(A,[],0,A).
+
+sumaPolinomio([A|Pol],X):-
+	length(Pol, Cont),
+	sumaPols(A,Pol, Cont, X),!.
+
+sumaPols(A, [B|Pol],Cont, X):-
+	sumaPol(A, B, X),
+	write(Pol), write(B), write(X),
+	Ncont is Cont-1,nl,
+	write(X),write(Pol), write(Ncont), write(X),
+	sumaPols(X,Pol,Ncont,X).
