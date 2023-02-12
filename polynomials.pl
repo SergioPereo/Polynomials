@@ -5,6 +5,15 @@
 degree([A|Coef], N) :-
 	A \= 0,
         length(Coef, N).
+
+pol(Coef, Deg, Deg, [Coef]):-!.
+
+pol(Coef, Deg, I, [0|Pol]):-
+	NI is I+1,
+	pol(Coef, Deg, NI, Pol).
+
+pol(Coef, Deg, Pol):-
+	pol(Coef, Deg, 0, Pol).
 % -------------------------------------------------------------------------
 % Suma de polinomios
 % DenominaciÃ³n de variables. A es el coeficiente de
@@ -19,7 +28,7 @@ suma_pol([A1|Pol1], [A2|Pol2], [A3|Pol3]) :-
 	suma_pol(Pol1,Pol2,Pol3). % Llamada recursiva para sumar las colas restantes de la lista de coeficientes de polinomios
 % ----------------------------------------------------------------------------------------
 % Producto escalar alpha * [An,...,An-1]
-coef_por_pol(_,[],[]):- %Multplicación de una lista vacía
+coef_por_pol(_,[],[]):- %Multplicaciï¿½n de una lista vacï¿½a
 	!.
 coef_por_pol(Alpha, [A|Pol], [An|PolN]):-
 	An is Alpha * A,
@@ -27,7 +36,7 @@ coef_por_pol(Alpha, [A|Pol], [An|PolN]):-
 
 % -----------------------------------------------------------------------------------------
 %Resta de polinios
-% Denominación de variables. A es el coeficiente de
+% Denominaciï¿½n de variables. A es el coeficiente de
 % la lista de coeficientes del polinomio Pol1, Pol2, Pol3 es una lista
 % de coeficientes
 resta_pol(Pol1,Pol2,PolRes):-
@@ -36,11 +45,11 @@ resta_pol(Pol1,Pol2,PolRes):-
 
 % -----------------------------------------------------------------------------------------
 % -------- PRODUCTO
-% Si B es vacío, el producto es vacío.
+% Si B es vacï¿½o, el producto es vacï¿½o.
 % producto_pol(i, i, o):
 producto_pol(_,[],[]):-
 	!.
-% Si son no vacíos
+% Si son no vacï¿½os
 producto_pol(A,[Cb|B], C) :-
 	producto_pol(A,B, Rec), %quitamos cabeza de B y llamamos recursivamente.
 	coef_por_pol(Cb, A, Esc), %calculamos el prod. Esc con la cabeza de B.
@@ -63,9 +72,10 @@ evaluate(Pol,X,Y):-
 
 /*
  * Beautify
- * Genera un texto en base al coeficiente y grado del término.
+ * Genera un texto en base al coeficiente y grado del tï¿½rmino.
  *
  */
+beautify(0,0,"0"):-!.
 beautify(0,_,""):-!.
 beautify(Coefficient,0,Text):-atom_string(Coefficient,Text),!.
 beautify(Coefficient,Deg,Text):-atomics_to_string([Coefficient,"x^",Deg],Text).
@@ -84,7 +94,7 @@ print_lot([Term|LoT]):-
 	print_lot(LoT),
 	write(Term),write(" + ").
 /*
- * To String
+p * To String
  * Recibe un polinomio y lo imprime de manera "bonita".
  *
  */
@@ -97,11 +107,61 @@ to_string([Coefficient|Pol],[Term|LoT],Deg):-
 	beautify(Coefficient,Deg,Term).
 % Inicia la funcion recursiva, filtra los terminos vacios e imprime los
 % terminos.
+
+
+%to_string()
 to_string(Pol):-
 	to_string(Pol,LoT,0),
 	exclude(are_the_same(""),LoT,[LastTerm|FilteredLoT]),
 	print_lot(FilteredLoT),
 	write(LastTerm),nl.
+
+deriva([_|Pol], NuevoPol):-
+	length(Pol,N),
+	deriva(Pol,N,N,NuevoPol).
+
+deriva([],_,_,[]):- !.
+
+deriva([A1|Pol],Grado,Cont,[A2|NuevoPol]):-
+	A2 is A1 * (Grado - Cont+1),
+	NuevoCont is Cont - 1,
+	deriva(Pol,Grado,NuevoCont,NuevoPol).
+
+compose([Term], PolB, PolC):-
+	pol(0,0,C),
+	producto_pol(PolB,C,Product),
+	suma_pol([Term],Product,PolC).
+
+compose([Term|PolA], PolB, PolC):-
+	compose(PolA, PolB, C),
+	producto_pol(PolB,C,Product),
+	suma_pol([Term],Product,PolC).
+
+main:-
+	pol(0,0,Zero),
+	pol(4,3,P1),
+	pol(3,2,P2),
+	pol(1,0,P3),
+	pol(2,1,P4),
+	suma_pol(P1,P2,P1P2),
+	suma_pol(P1P2,P3,P1P2P3),
+	suma_pol(P1P2P3,P4,P),
+	pol(3,2,Q1),
+	pol(5,0,Q2),
+	suma_pol(Q1,Q2,Q),
+	suma_pol(P,Q,R),
+	producto_pol(P,Q,S),
+	compose(P,Q,T),
+	write("zero(x)\t\t\t= "),to_string(Zero),nl,
+	write("p(x)\t\t\t= "),to_string(P),nl,
+	write("q(x)\t\t\t= "),to_string(Q),nl,
+	write("p(x) + q(x)\t\t= "),to_string(R),nl,
+	write("p(x) * q(x)\t\t= "),to_string(S),nl,
+	write("p(q(x))\t\t\t= "),to_string(T),nl,
+	write("0 - p(x)\t\t= "),resta_pol(Zero,P,ZP),to_string(ZP),nl,
+	write("p(3)\t\t\t= "),evaluate(P,3,Evaluation),write(Evaluation),nl,
+	write("p'(x)\t\t\t= "),deriva(P,DP),to_string(DP),nl,
+	write("p''(x)\t\t\t= "),deriva(DP,DDP),to_string(DDP),nl.
 
 
 cls :- write('\33\[2J').
